@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "742938486218",
+    "firebase_url": "https://leato-f8fa1-default-rtdb.firebaseio.com",
+    "project_id": "leato-f8fa1",
+    "storage_bucket": "leato-f8fa1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:742938486218:android:007049758a2abf93aa9b33",
+        "android_client_info": {
+          "package_name": "com.sivajr.admeto"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "742938486218-jiuujekgpedkai5j1soeuc6eqme2f0o1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOU7Z7auOYh9jk0_qe5gT_sHz8-Sqczbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "742938486218-jiuujekgpedkai5j1soeuc6eqme2f0o1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:742938486218:android:08878408b8f2c15caa9b33",
+        "android_client_info": {
+          "package_name": "com.sivajr.leato"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "742938486218-jiuujekgpedkai5j1soeuc6eqme2f0o1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOU7Z7auOYh9jk0_qe5gT_sHz8-Sqczbo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "742938486218-jiuujekgpedkai5j1soeuc6eqme2f0o1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
