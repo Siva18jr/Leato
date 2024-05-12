@@ -1,16 +1,10 @@
-package com.sivajr.leato;
+package com.devilcat.leato.views;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -19,6 +13,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+
+import com.devilcat.leato.MainActivity;
+import com.devilcat.leato.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -40,7 +40,6 @@ public class Login extends AppCompatActivity {
     String verificationID;
     ProgressBar bar;
     ImageView offline;
-    Context context;
     String[] items = {"Python","Java"};
     AutoCompleteTextView autoCompleteTxt;
     ArrayAdapter<String> adapterItems;
@@ -63,18 +62,13 @@ public class Login extends AppCompatActivity {
         offline = findViewById(R.id.offline);
         autoCompleteTxt = findViewById(R.id.auto_complete_language);
 
-        adapterItems = new ArrayAdapter<String>(this,R.layout.item_lang,items);
+        adapterItems = new ArrayAdapter<>(this, R.layout.item_lang, items);
 
         autoCompleteTxt.setAdapter(adapterItems);
 
-        autoCompleteTxt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        autoCompleteTxt.setOnItemClickListener((parent, view, position, id) -> {
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                String item = parent.getItemAtPosition(position).toString();
-
-            }
+            String item = parent.getItemAtPosition(position).toString();
 
         });
 
@@ -85,41 +79,31 @@ public class Login extends AppCompatActivity {
 
         }
 
-        send.setOnClickListener(new View.OnClickListener() {
+        send.setOnClickListener(v -> {
 
-            @Override
-            public void onClick(View v) {
+            if(TextUtils.isEmpty(phone.getText().toString())) {
 
-                if(TextUtils.isEmpty(phone.getText().toString())) {
+                Toast.makeText(Login.this, "Enter Valid Phone No.", Toast.LENGTH_SHORT).show();
 
-                    Toast.makeText(Login.this, "Enter Valid Phone No.", Toast.LENGTH_SHORT).show();
+            }else {
 
-                }else {
-
-                    String number = phone.getText().toString();
-                    bar.setVisibility(View.VISIBLE);
-                    sendverificationcode(number);
-
-                }
+                String number = phone.getText().toString();
+                bar.setVisibility(View.VISIBLE);
+                sendverificationcode(number);
 
             }
 
         });
 
-        verify.setOnClickListener(new View.OnClickListener() {
+        verify.setOnClickListener(v -> {
 
-            @Override
-            public void onClick(View v) {
+            if(TextUtils.isEmpty(otp.getText().toString())){
 
-                if(TextUtils.isEmpty(otp.getText().toString())){
+                Toast.makeText(Login.this, "Wrong OTP Entered", Toast.LENGTH_SHORT).show();
 
-                    Toast.makeText(Login.this, "Wrong OTP Entered", Toast.LENGTH_SHORT).show();
+            } else {
 
-                } else {
-
-                    verifycode(otp.getText().toString());
-
-                }
+                verifycode(otp.getText().toString());
 
             }
 
@@ -139,7 +123,7 @@ public class Login extends AppCompatActivity {
 
     }
 
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+    private final PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
@@ -210,7 +194,7 @@ public class Login extends AppCompatActivity {
 
                 } else {
 
-                    Toast.makeText(Login.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -237,7 +221,7 @@ public class Login extends AppCompatActivity {
 
     private boolean isConnected(){
 
-        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting();
 
     }
@@ -245,6 +229,7 @@ public class Login extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
+        super.onBackPressed();
         finishAffinity();
 
     }

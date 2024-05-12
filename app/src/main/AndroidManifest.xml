@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.sivajr.leato">
+    package="com.devilcat.leato">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,28 +18,31 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".Login"
+            android:name=".views.Detail"
             android:exported="false" />
         <activity
-            android:name=".PythonDetail"
-            android:exported="false"
-            android:parentActivityName=".Python" />
-        <activity
-            android:name=".Python"
+            android:name=".views.Login"
             android:exported="false" />
         <activity
-            android:name=".JavaDetail"
+            android:name=".views.PythonDetail"
             android:exported="false"
-            android:parentActivityName=".Java" />
+            android:parentActivityName=".views.Python" />
         <activity
-            android:name=".Java"
+            android:name=".views.Python"
+            android:exported="false" />
+        <activity
+            android:name=".views.JavaDetail"
+            android:exported="false"
+            android:parentActivityName=".views.Java" />
+        <activity
+            android:name=".views.Java"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".Splash"
+            android:name=".views.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

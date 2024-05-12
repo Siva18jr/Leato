@@ -1,4 +1,13 @@
-package com.sivajr.leato;
+package com.devilcat.leato.views;
+
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -9,17 +18,9 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
-import android.net.ConnectivityManager;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
-
+import com.devilcat.leato.adapter.JavaAdapter;
+import com.devilcat.leato.models.JavaModel;
+import com.devilcat.leato.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,23 +32,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Python extends AppCompatActivity {
+public class Java extends AppCompatActivity {
 
     RecyclerView recyclerView;
-    List<PyConstruct> dataList;
+    List<JavaModel> dataList;
     DatabaseReference db;
-    ValueEventListener eventListener;
     SearchView searchView;
-    PyAdapter adapter;
+    JavaAdapter adapter;
     Button logout, home;
     ImageView offline;
     FirebaseAuth auth;
-    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_python);
+        setContentView(R.layout.activity_java);
+
+        ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
+        actionBar.setTitle("Java");
+        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
+        getWindow().setStatusBarColor(ContextCompat.getColor(Java.this, R.color.black));
 
         recyclerView = findViewById(R.id.recyclerview);
         searchView = findViewById(R.id.search);
@@ -57,15 +62,10 @@ public class Python extends AppCompatActivity {
         offline = findViewById(R.id.offline);
         home = findViewById(R.id.home);
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Python");
-        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.black)));
-        getWindow().setStatusBarColor(ContextCompat.getColor(Python.this, R.color.black));
-
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(Python.this, 1);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(Java.this, 1);
         recyclerView.setLayoutManager(gridLayoutManager);
 
-        adapter = new PyAdapter(Python.this, dataList);
+        adapter = new JavaAdapter(Java.this, dataList);
         recyclerView.setAdapter(adapter);
 
         if(!isConnected()){
@@ -75,29 +75,16 @@ public class Python extends AppCompatActivity {
 
         }
 
-        home.setOnClickListener(new View.OnClickListener() {
+        home.setOnClickListener(view -> {
 
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Python.this, Splash.class);
-                startActivity(intent);
-
-            }
+            Intent intent = new Intent(Java.this, Splash.class);
+            startActivity(intent);
 
         });
 
-        logout.setOnClickListener(new View.OnClickListener() {
+        logout.setOnClickListener(v -> logout());
 
-            @Override
-            public void onClick(View v) {
-
-                logout();
-
-            }
-
-        });
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(Python.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(Java.this);
         builder.setCancelable(false);
         builder.setView(R.layout.progress);
         AlertDialog dialog = builder.create();
@@ -107,7 +94,7 @@ public class Python extends AppCompatActivity {
 
         dialog.show();
 
-        eventListener = db.child("Python").addValueEventListener(new ValueEventListener() {
+        db.child("Java").addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -116,7 +103,7 @@ public class Python extends AppCompatActivity {
 
                 for (DataSnapshot snap : snapshot.getChildren()) {
 
-                    PyConstruct dataClass = snap.getValue(PyConstruct.class);
+                    JavaModel dataClass = snap.getValue(JavaModel.class);
                     dataList.add(dataClass);
 
                 }
@@ -129,7 +116,7 @@ public class Python extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
-                Toast.makeText(Python.this, "error fetching data", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Java.this, "error fetching data", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -158,9 +145,9 @@ public class Python extends AppCompatActivity {
 
     public void search(String text){
 
-        ArrayList<PyConstruct> search = new ArrayList<>();
+        ArrayList<JavaModel> search = new ArrayList<>();
 
-        for (PyConstruct data : dataList) {
+        for (JavaModel data : dataList) {
 
             if (data.getDetails().toLowerCase().contains(text.toLowerCase())) {
 
@@ -176,7 +163,7 @@ public class Python extends AppCompatActivity {
 
     private boolean isConnected(){
 
-        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting();
 
     }
@@ -188,41 +175,19 @@ public class Python extends AppCompatActivity {
         builder.setTitle("Confirm");
         builder.setMessage("Are you sure?");
 
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("YES", (dialogInterface, i) -> {
 
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                auth.signOut();
-//                showSuccessAlertDialog();
-                startActivity(new Intent(Python.this, Login.class));
-                dialogInterface.dismiss();
-                finish();
-
-            }
+            auth.signOut();
+            startActivity(new Intent(Java.this, Login.class));
+            dialogInterface.dismiss();
+            finish();
 
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                dialogInterface.dismiss();
-
-            }
-
-        });
+        builder.setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss());
 
         AlertDialog alert = builder.create();
-        alert.show();;
-
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        return;
+        alert.show();
 
     }
 

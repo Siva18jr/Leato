@@ -1,4 +1,4 @@
-package com.sivajr.leato;
+package com.devilcat.leato.views;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +10,8 @@ import android.os.Handler;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.devilcat.leato.MainActivity;
+import com.devilcat.leato.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class Splash extends AppCompatActivity {
@@ -30,26 +32,22 @@ public class Splash extends AppCompatActivity {
 
         String v = "1.0";
 
-        new Handler().postDelayed(new Runnable() {
+        new Handler().postDelayed(() -> {
 
-            @Override
-            public void run() {
+            if (auth.getCurrentUser() == null) {
 
-                if (auth.getCurrentUser() == null) {
+                Intent i = new Intent(Splash.this, Login.class);
+                startActivity(i);
+                finish();
 
-                    Intent i = new Intent(Splash.this, Login.class);
-                    startActivity(i);
-                    finish();
+            }else{
 
-                }else{
-
-                    Intent i = new Intent(Splash.this, MainActivity.class);
-                    startActivity(i);
-                    finish();
-
-                }
+                Intent i = new Intent(Splash.this, MainActivity.class);
+                startActivity(i);
+                finish();
 
             }
+
         },3000);
 
         try {
@@ -70,7 +68,7 @@ public class Splash extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        return ;
+        super.onBackPressed();
 
     }
 

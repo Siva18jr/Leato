@@ -1,33 +1,21 @@
-package com.sivajr.leato;
+package com.devilcat.leato.models;
 
-public class JavaConstruct {
+public class PythonModel {
 
     private String title;
     private String details;
     private String period;
     private String key;
 
-    public JavaConstruct(){
+    public PythonModel(){
 
     }
 
-    public JavaConstruct(String title, String details, String period) {
+    public PythonModel(String title, String details, String period) {
 
         this.title = title;
         this.details = details;
         this.period = period;
-
-    }
-
-    public String getKey() {
-
-        return key;
-
-    }
-
-    public void setKey(String key) {
-
-        this.key = key;
 
     }
 
@@ -64,6 +52,18 @@ public class JavaConstruct {
     public void setPeriod(String period) {
 
         this.period = period;
+
+    }
+
+    public String getKey() {
+
+        return key;
+
+    }
+
+    public void setKey(String key) {
+
+        this.key = key;
 
     }
 

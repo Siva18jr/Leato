@@ -1,23 +1,12 @@
-package com.sivajr.leato;
+package com.devilcat.leato.models;
 
-public class PyConstruct {
+public class HomeDataModel {
 
     private String title;
     private String details;
     private String period;
+    private String lang;
     private String key;
-
-    public PyConstruct(){
-
-    }
-
-    public PyConstruct(String title, String details, String period) {
-
-        this.title = title;
-        this.details = details;
-        this.period = period;
-
-    }
 
     public String getTitle() {
 
@@ -52,6 +41,18 @@ public class PyConstruct {
     public void setPeriod(String period) {
 
         this.period = period;
+
+    }
+
+    public String getLang() {
+
+        return lang;
+
+    }
+
+    public void setLang(String lang) {
+
+        this.lang = lang;
 
     }
 

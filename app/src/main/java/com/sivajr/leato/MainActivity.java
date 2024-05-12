@@ -1,48 +1,65 @@
-package com.sivajr.leato;
+package com.devilcat.leato;
+
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
-import android.net.ConnectivityManager;
-import android.net.Uri;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import com.devilcat.leato.adapter.HomeAdapter;
+import com.devilcat.leato.fragments.HomeFragment;
+import com.devilcat.leato.fragments.JavaFragment;
+import com.devilcat.leato.fragments.PythonFragment;
+import com.devilcat.leato.fragments.ShareFragment;
+import com.devilcat.leato.models.HomeDataModel;
+import com.devilcat.leato.views.Java;
+import com.devilcat.leato.views.Login;
+import com.devilcat.leato.views.Python;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
-    Context context;
     ImageView offline;
     FirebaseAuth auth;
+    RecyclerView recyclerView;
+    List<HomeDataModel> dataList;
+    DatabaseReference db;
+    SearchView searchView;
+    HomeAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        recyclerView = findViewById(R.id.home_recycler);
+        searchView = findViewById(R.id.search);
         offline = findViewById(R.id.offline);
         auth = FirebaseAuth.getInstance();
-
-        showErrorAlertDialog();
 
         if(!isConnected()){
 
@@ -56,8 +73,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav,
-                R.string.close_nav);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav, R.string.close_nav);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -67,6 +83,100 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navigationView.setCheckedItem(R.id.nav_home);
 
         }
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this, 1);
+        recyclerView.setLayoutManager(gridLayoutManager);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setCancelable(false);
+        builder.setView(R.layout.progress);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        dataList = new ArrayList<>();
+
+        adapter = new HomeAdapter(MainActivity.this, dataList);
+        recyclerView.setAdapter(adapter);
+
+        db = FirebaseDatabase.getInstance().getReference("topics");
+        dialog.show();
+
+        db.child("Java").addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                dataList.clear();
+
+                for (DataSnapshot snap: snapshot.getChildren()){
+
+                    HomeDataModel dataClass = snap.getValue(HomeDataModel.class);
+                    assert dataClass != null;
+                    dataClass.setKey(snap.getKey());
+                    dataList.add(dataClass);
+
+                }
+
+                adapter.notifyDataSetChanged();
+                dialog.dismiss();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+                dialog.dismiss();
+
+            }
+
+        });
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                search(newText);
+                return true;
+
+            }
+
+        });
+
+        db.child("Python").addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot snap: snapshot.getChildren()){
+
+                    HomeDataModel dataClass = snap.getValue(HomeDataModel.class);
+                    assert dataClass != null;
+                    dataClass.setKey(snap.getKey());
+                    dataList.add(dataClass);
+
+                }
+
+                adapter.notifyDataSetChanged();
+                dialog.dismiss();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+                dialog.dismiss();
+
+            }
+
+        });
 
     }
 
@@ -122,82 +232,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private boolean isConnected(){
 
-        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting();
 
     }
-
-    private void showErrorAlertDialog(){
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-        View view = LayoutInflater.from(MainActivity.this).inflate(
-                R.layout.error_dialog,(ConstraintLayout)findViewById(R.id.DialogContainer)
-        );
-        builder.setView(view);
-        ((TextView) view.findViewById(R.id.title)).setText("Error");
-        ((TextView) view.findViewById(R.id.textMessage)).setText("Go to menu and select the language");
-        ((Button) view.findViewById(R.id.action)).setText("Okay");
-        ((ImageView) view.findViewById(R.id.imageIcon)).setImageResource(R.drawable.error);
-
-        final AlertDialog alertDialog = builder.create();
-
-        view.findViewById(R.id.action).setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-
-                alertDialog.dismiss();
-                Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_SHORT).show();
-
-            }
-
-        });
-
-        if (alertDialog.getWindow() != null){
-
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-
-        }
-
-        alertDialog.show();
-
-    }
-
-//    private void showSuccessAlertDialog(){
-//
-//        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this, R.style.AlertDialogTheme);
-//        View view = LayoutInflater.from(MainActivity.this).inflate(
-//                R.layout.success_dialog,(ConstraintLayout)findViewById(R.id.DialogContainer)
-//        );
-//        builder.setView(view);
-//        ((TextView) view.findViewById(R.id.title)).setText("Success");
-//        ((TextView) view.findViewById(R.id.textMessage)).setText("Successfully Logged Out");
-//        ((Button) view.findViewById(R.id.action)).setText("Okay");
-//        ((ImageView) view.findViewById(R.id.imageIcon)).setImageResource(R.drawable.done);
-//
-//        final AlertDialog alertDialog = builder.create();
-//
-//        view.findViewById(R.id.action).setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View view) {
-//
-//                alertDialog.dismiss();
-//                Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_SHORT).show();
-//
-//            }
-//
-//        });
-//
-//        if (alertDialog.getWindow() != null){
-//
-//            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-//
-//        }
-//
-//        alertDialog.show();
-//
-//    }
 
     private void logout(){
 
@@ -206,34 +244,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         builder.setTitle("Confirm");
         builder.setMessage("Are you sure?");
 
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("YES", (dialogInterface, i) -> {
 
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                auth.signOut();
-//                showSuccessAlertDialog();
-                startActivity(new Intent(MainActivity.this, Login.class));
-                dialogInterface.dismiss();
-                finish();
-
-            }
+            auth.signOut();
+            startActivity(new Intent(MainActivity.this, Login.class));
+            dialogInterface.dismiss();
+            finish();
 
         });
 
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                dialogInterface.dismiss();
-
-            }
-
-        });
+        builder.setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss());
 
         AlertDialog alert = builder.create();
         alert.show();
+
+    }
+
+    public void search(String text){
+
+        ArrayList<HomeDataModel> search = new ArrayList<>();
+
+        for (HomeDataModel data : dataList){
+
+            if (data.getDetails().toLowerCase().contains(text.toLowerCase()) || data.getLang().toLowerCase().contains(text.toLowerCase()) || data.getTitle().toLowerCase().contains(text.toLowerCase())){
+
+                search.add(data);
+
+            }
+
+            adapter.searchData(search);
+
+        }
 
     }
 
