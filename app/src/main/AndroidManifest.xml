@@ -21,9 +21,6 @@
             android:name=".views.Detail"
             android:exported="false" />
         <activity
-            android:name=".views.Login"
-            android:exported="false" />
-        <activity
             android:name=".views.PythonDetail"
             android:exported="false"
             android:parentActivityName=".views.Python" />

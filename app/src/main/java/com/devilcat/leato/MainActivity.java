@@ -1,5 +1,6 @@
 package com.devilcat.leato;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -24,18 +25,16 @@ import com.devilcat.leato.adapter.HomeAdapter;
 import com.devilcat.leato.fragments.HomeFragment;
 import com.devilcat.leato.fragments.JavaFragment;
 import com.devilcat.leato.fragments.PythonFragment;
-import com.devilcat.leato.fragments.ShareFragment;
 import com.devilcat.leato.models.HomeDataModel;
 import com.devilcat.leato.views.Java;
-import com.devilcat.leato.views.Login;
 import com.devilcat.leato.views.Python;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.collection.BuildConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +43,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private DrawerLayout drawerLayout;
     ImageView offline;
-    FirebaseAuth auth;
     RecyclerView recyclerView;
     List<HomeDataModel> dataList;
     DatabaseReference db;
@@ -59,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView = findViewById(R.id.home_recycler);
         searchView = findViewById(R.id.search);
         offline = findViewById(R.id.offline);
-        auth = FirebaseAuth.getInstance();
 
         if(!isConnected()){
 
@@ -208,19 +205,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.nav_share:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ShareFragment()).commit();
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_SUBJECT, "share app");
+                @SuppressLint("RestrictedApi") String message = "Download apk : https://play.google.com/store/apps/details?id=com.devilcat.leato \n\n by : " + BuildConfig.APPLICATION_ID +"\n\n";
+                intent.putExtra(Intent.EXTRA_TEXT, message);
+                startActivity(Intent.createChooser(intent, "share by"));
                 break;
 
             case R.id.nav_about:
-//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AboutFragment()).commit();
                 Intent url = new Intent();
                 url.setAction(Intent.ACTION_VIEW);
                 url.addCategory(Intent.CATEGORY_BROWSABLE);
                 url.setData(Uri.parse("https://sivajr-3.web.app/"));
                 startActivity(url);
-
-            case R.id.nav_logout:
-                logout();
                 break;
 
         }
@@ -234,29 +232,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting();
-
-    }
-
-    private void logout(){
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setTitle("Confirm");
-        builder.setMessage("Are you sure?");
-
-        builder.setPositiveButton("YES", (dialogInterface, i) -> {
-
-            auth.signOut();
-            startActivity(new Intent(MainActivity.this, Login.class));
-            dialogInterface.dismiss();
-            finish();
-
-        });
-
-        builder.setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss());
-
-        AlertDialog alert = builder.create();
-        alert.show();
 
     }
 

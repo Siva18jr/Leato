@@ -5,29 +5,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Python">
+    tools:context=".views.Python">
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="10dp"
-        android:drawableLeft="@drawable/home"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="10dp"
+        android:drawableStart="@drawable/home"
         android:id="@+id/home"
         android:backgroundTint="@color/green"
         android:text="Home"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:id="@+id/logout"
-        android:backgroundTint="@color/red"
-        android:text="logout"/>
-
     <androidx.appcompat.widget.SearchView
-        android:layout_below="@+id/logout"
+        android:layout_below="@+id/home"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"

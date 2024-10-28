@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.HomeFragment">
+
+    <androidx.appcompat.widget.SearchView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:id="@+id/search"
+        app:iconifiedByDefault="false"
+        app:searchHintIcon="@null"
+        app:queryHint="Search..."
+        android:focusable="false"
+        android:background="@drawable/lavender"
+        app:closeIcon="@drawable/ic_baseline_clear_24"
+        app:searchIcon="@drawable/ic_baseline_search_24"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/home_recycler"
+        android:scrollbars="vertical"
+        android:layout_below="@+id/search"/>
+
+    <ImageView
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/no_data_home_img"
+        android:contentDescription="@string/no_data_found"
+        android:src="@drawable/sorry"/>
+
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/no_data_home_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/no_data_home_img"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:textSize="25sp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/no_data_found"
+        android:textAlignment="center"
+        android:textStyle="bold" />
+
+</RelativeLayout>

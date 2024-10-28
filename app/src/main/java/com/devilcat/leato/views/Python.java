@@ -18,10 +18,10 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.devilcat.leato.MainActivity;
 import com.devilcat.leato.models.PythonModel;
 import com.devilcat.leato.R;
 import com.devilcat.leato.adapter.PythonAdapter;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,9 +40,8 @@ public class Python extends AppCompatActivity {
     ValueEventListener eventListener;
     SearchView searchView;
     PythonAdapter adapter;
-    Button logout, home;
+    Button home;
     ImageView offline;
-    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +51,6 @@ public class Python extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerview);
         searchView = findViewById(R.id.search);
         dataList = new ArrayList<>();
-        logout = findViewById(R.id.logout);
-        auth = FirebaseAuth.getInstance();
         offline = findViewById(R.id.offline);
         home = findViewById(R.id.home);
 
@@ -78,12 +75,10 @@ public class Python extends AppCompatActivity {
 
         home.setOnClickListener(view -> {
 
-            Intent intent = new Intent(Python.this, Splash.class);
+            Intent intent = new Intent(Python.this, MainActivity.class);
             startActivity(intent);
 
         });
-
-        logout.setOnClickListener(v -> logout());
 
         AlertDialog.Builder builder = new AlertDialog.Builder(Python.this);
         builder.setCancelable(false);
@@ -166,29 +161,6 @@ public class Python extends AppCompatActivity {
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(CONNECTIVITY_SERVICE);
         return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnectedOrConnecting();
-
-    }
-
-    private void logout(){
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setTitle("Confirm");
-        builder.setMessage("Are you sure?");
-
-        builder.setPositiveButton("YES", (dialogInterface, i) -> {
-
-            auth.signOut();
-            startActivity(new Intent(Python.this, Login.class));
-            dialogInterface.dismiss();
-            finish();
-
-        });
-
-        builder.setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss());
-
-        AlertDialog alert = builder.create();
-        alert.show();
 
     }
 
