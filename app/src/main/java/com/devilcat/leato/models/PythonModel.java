@@ -2,10 +2,10 @@ package com.devilcat.leato.models;
 
 public class PythonModel {
 
-    private String title;
-    private String details;
-    private String period;
-    private String key;
+    public String title;
+    public String details;
+    public String period;
+    public String key;
 
     public PythonModel(){
 

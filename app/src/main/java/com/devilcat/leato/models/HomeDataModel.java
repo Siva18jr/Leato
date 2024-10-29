@@ -2,11 +2,11 @@ package com.devilcat.leato.models;
 
 public class HomeDataModel {
 
-    private String title;
-    private String details;
-    private String period;
-    private String lang;
-    private String key;
+    public String title;
+    public String details;
+    public String period;
+    public String lang;
+    public String key;
 
     public String getTitle() {
 

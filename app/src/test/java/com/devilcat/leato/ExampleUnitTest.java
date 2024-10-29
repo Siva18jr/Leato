@@ -1,4 +1,4 @@
-package com.sivajr.leato;
+package com.devilcat.leato;
 
 import org.junit.Test;
 
